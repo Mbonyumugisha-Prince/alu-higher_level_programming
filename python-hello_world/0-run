@@ -1,4 +1,3 @@
 #!/bin/bash
-# This script runs the Python script whose filename is stored in the $PYFILE environment variable
 python3 "$PYFILE"
 
