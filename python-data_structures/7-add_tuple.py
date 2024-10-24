@@ -1,9 +1,9 @@
 #!/usr/bin/python3
-def print_matrix_integer(matrix=[[]]):
-    for row in matrix:
-        for i, num in enumerate(row):
-            if i < len(row) - 1:
-                print("{:d}".format(num), end=" ")
-            else:
-                print("{:d}".format(num), end="")
-        print()
+def add_tuple(tuple_a=(), tuple_b=()):
+    # Ensure both tuples have at least two elements by padding with zeros
+    tuple_a = tuple_a + (0, 0)
+    tuple_b = tuple_b + (0, 0)
+
+    # Create a new tuple with the sum of the first and second elements
+    return (tuple_a[0] + tuple_b[0], tuple_a[1] + tuple_b[1])
+
