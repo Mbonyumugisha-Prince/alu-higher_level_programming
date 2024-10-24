@@ -9,4 +9,3 @@ def new_in_list(my_list, idx, element):
     
     # Return the new list, whether modified or not
     return new_list
-
