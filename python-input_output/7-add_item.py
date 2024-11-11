@@ -17,4 +17,3 @@ for i in argv[1:]:
 
 # Save the updated list to the file
 save_to_json_file(json_list, filename)
-
