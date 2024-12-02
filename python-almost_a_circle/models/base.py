@@ -2,87 +2,61 @@
 """Class Base"""
 
 import json
+import csv
 
 
 class Base:
-    """"
-        Class Base
-        Attr :
-                id: number
+    """
+    Base class
+    Attributes:
+        __nb_objects (int): Counter for automatically assigned IDs
     """
     __nb_objects = 0
 
     def __init__(self, id=None):
-        Base.__nb_objects += 1
-        self.id = id
-
-    @property
-    def id(self):
-        """Doc"""
-        return self.__id
-
-    @id.setter
-    def id(self, value):
-        """Doc"""
-        if value is None:
-            self.__id = self.__nb_objects
+        if id is not None:
+            self.id = id
         else:
-            self.__id = value
-
-    @staticmethod
-    def to_json_string(list_dictionaries):
-        """Doc"""
-        if list_dictionaries is None or \
-                len(list_dictionaries) == 0:
-            return "[]"
-        else:
-            return json.dumps(list_dictionaries)
+            Base.__nb_objects += 1
+            self.id = Base.__nb_objects
 
     @classmethod
-    def save_to_file(cls, list_objs):
-        """writes the JSON string representation
-        of list_objs to a file
-        """
-        list_objs_dict = []
-        with open(cls.__name__ + '.json', "w") as file:
+    def save_to_file_csv(cls, list_objs):
+        """Writes the CSV serialization of a list of objects to a file."""
+        filename = f"{cls.__name__}.csv"
+        with open(filename, "w", newline="") as csvfile:
             if list_objs is None or len(list_objs) == 0:
-                file.write("[]")
-            elif type(list_objs) == list:
+                csvfile.write("")
+            else:
+                fieldnames = list_objs[0].to_dictionary().keys()
+                writer = csv.DictWriter(csvfile, fieldnames=fieldnames)
+                writer.writeheader()
                 for obj in list_objs:
-                    list_objs_dict.append(obj.to_dictionary())
-                file.write(cls.to_json_string(list_objs_dict))
+                    writer.writerow(obj.to_dictionary())
 
-    @staticmethod
-    def from_json_string(json_string):
-        """returns the list of the JSON string representation json_string"""
-        if json_string is None or \
-                len(json_string) == 0:
-            return list()
-        else:
-            return json.loads(json_string)
+    @classmethod
+    def load_from_file_csv(cls):
+        """Reads a CSV file and deserializes it into a list of objects."""
+        filename = f"{cls.__name__}.csv"
+        try:
+            with open(filename, "r", newline="") as csvfile:
+                reader = csv.DictReader(csvfile)
+                list_objs = []
+                for row in reader:
+                    row = {key: int(value) for key, value in row.items()}
+                    list_objs.append(cls.create(**row))
+                return list_objs
+        except FileNotFoundError:
+            return []
 
     @classmethod
     def create(cls, **dictionary):
-        """ returns an instance with all attributes already set"""
+        """Creates an instance with attributes set based on the dictionary."""
         if cls.__name__ == "Rectangle":
-            dummy_instance = cls(4, 3)
-        if cls.__name__ == "Square":
-            dummy_instance = cls(4)
-        dummy_instance.update(**dictionary)
-        return dummy_instance
+            dummy = cls(1, 1)
+        elif cls.__name__ == "Square":
+            dummy = cls(1)
+        dummy.update(**dictionary)
+        return dummy
 
-    @classmethod
-    def load_from_file(cls):
-        """returns a list of instances from file"""
-        try:
-            with open(cls.__name__ + ".json", "r") as file:
-                serialized_content = file.read()
-        except FileNotFoundError:
-            return list()
 
-        deserialized_content = cls.from_json_string(serialized_content)
-
-        instances_list = []
-        for instance_dict in deserialized_content:
-            instances_list.append(cls.create(**instance_dict))
-        return instances_list

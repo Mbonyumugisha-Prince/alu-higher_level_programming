@@ -1,55 +1,91 @@
 #!/usr/bin/python3
-"""Class Square that inherit from Rectangle"""
+"""Class Rectangle that inherits from Base"""
 
-from models.rectangle import Rectangle
+from models.base import Base
 
 
-class Square(Rectangle):
-    """"
-            Class Square inheriting Rectangle
-            Attr :
-                    id: number
-                    size: number
-                    x: number
-                    y: number
-        """
+class Rectangle(Base):
+    """
+    Class Rectangle inheriting Base
+    Attributes:
+        width (int): The width of the rectangle
+        height (int): The height of the rectangle
+        x (int): The x coordinate
+        y (int): The y coordinate
+    """
 
-    def __init__(self, size, x=0, y=0, id=None):
-        super().__init__(size, size, x, y, id)
+    def __init__(self, width, height, x=0, y=0, id=None):
+        super().__init__(id)
+        self.width = width
+        self.height = height
+        self.x = x
+        self.y = y
 
     @property
-    def size(self):
-        """Size getter"""
-        return self.width
+    def width(self):
+        """Width getter"""
+        return self.__width
 
-    @size.setter
-    def size(self, value):
-        """Size setter"""
-        self.width = value
-        self.height = value
+    @width.setter
+    def width(self, value):
+        """Width setter"""
+        self.__validate_integer(value, "width")
+        self.__width = value
 
-    def __str__(self):
-        """return [Square] (<id>) <x>/<y> - <size>"""
-        return "[Square] ({}) {}/{} - {}" \
-            .format(self.id, self.x, self.y, self.size)
+    @property
+    def height(self):
+        """Height getter"""
+        return self.__height
 
-    def update(self, *args, **kwargs):
-        """assigns attributes"""
-        if len(args) != 0:
-            try:
-                self.id = args[0]
-                self.size = args[1]
-                self.x = args[2]
-                self.y = args[3]
-            except IndexError:
-                pass
-        elif len(kwargs) != 0:
-            self.id = kwargs["id"] if "id" in kwargs else self.id
-            self.size = kwargs["size"] if "size" in kwargs \
-                else self.size
-            self.x = kwargs["x"] if "x" in kwargs else self.x
-            self.y = kwargs["y"] if "y" in kwargs else self.y
+    @height.setter
+    def height(self, value):
+        """Height setter"""
+        self.__validate_integer(value, "height")
+        self.__height = value
+
+    @property
+    def x(self):
+        """X coordinate getter"""
+        return self.__x
+
+    @x.setter
+    def x(self, value):
+        """X coordinate setter"""
+        self.__validate_integer(value, "x")
+        self.__x = value
+
+    @property
+    def y(self):
+        """Y coordinate getter"""
+        return self.__y
+
+    @y.setter
+    def y(self, value):
+        """Y coordinate setter"""
+        self.__validate_integer(value, "y")
+        self.__y = value
 
     def to_dictionary(self):
-        """returns the dictionary representation of a Rectangle"""
-        return {'id': self.id, 'size': self.size, 'x': self.x, 'y': self.y}
+        """Returns a dictionary representation of the instance."""
+        return {
+            "id": self.id,
+            "width": self.width,
+            "height": self.height,
+            "x": self.x,
+            "y": self.y,
+        }
+
+    def update(self, **kwargs):
+        """Updates the instance attributes."""
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    def __validate_integer(self, value, name):
+        """Validates that the input is a positive integer."""
+        if not isinstance(value, int):
+            raise TypeError(f"{name} must be an integer")
+        if value < 0 and name in ("x", "y"):
+            raise ValueError(f"{name} must be >= 0")
+        if value <= 0 and name in ("width", "height"):
+            raise ValueError(f"{name} must be > 0")
+

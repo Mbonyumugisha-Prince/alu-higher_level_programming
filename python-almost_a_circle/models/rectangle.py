@@ -1,18 +1,17 @@
 #!/usr/bin/python3
-"""Class Rectangle that inherit from Base"""
+"""Class Rectangle that inherits from Base"""
 
 from models.base import Base
 
 
 class Rectangle(Base):
-    """"
-        Class Rectangle inheriting Base
-        Attr :
-                id: number
-                width: number
-                height: number
-                x: number
-                y: number
+    """
+    Class Rectangle inheriting Base
+    Attributes:
+        width (int): The width of the rectangle
+        height (int): The height of the rectangle
+        x (int): The x coordinate
+        y (int): The y coordinate
     """
 
     def __init__(self, width, height, x=0, y=0, id=None):
@@ -30,10 +29,7 @@ class Rectangle(Base):
     @width.setter
     def width(self, value):
         """Width setter"""
-        if type(value) != int:
-            raise TypeError("width must be an integer")
-        if value <= 0:
-            raise ValueError("width must be > 0")
+        self.__validate_integer(value, "width")
         self.__width = value
 
     @property
@@ -44,82 +40,52 @@ class Rectangle(Base):
     @height.setter
     def height(self, value):
         """Height setter"""
-        if type(value) != int:
-            raise TypeError("height must be an integer")
-        if value <= 0:
-            raise ValueError("height must be > 0")
+        self.__validate_integer(value, "height")
         self.__height = value
 
     @property
     def x(self):
-        """x getter"""
+        """X coordinate getter"""
         return self.__x
 
     @x.setter
     def x(self, value):
-        """x setter"""
-        if type(value) != int:
-            raise TypeError("x must be an integer")
-        if value < 0:
-            raise ValueError("x must be >= 0")
+        """X coordinate setter"""
+        self.__validate_integer(value, "x")
         self.__x = value
 
     @property
     def y(self):
-        """x getter"""
+        """Y coordinate getter"""
         return self.__y
 
     @y.setter
     def y(self, value):
-        """x setter"""
-        if type(value) != int:
-            raise TypeError("y must be an integer")
-        if value < 0:
-            raise ValueError("y must be >= 0")
+        """Y coordinate setter"""
+        self.__validate_integer(value, "y")
         self.__y = value
 
-    def area(self):
-        """:returns rectangle area"""
-        return self.width * self.height
-
-    def display(self):
-        """Returns the rectangle with the character #"""
-        for i in range(self.y):
-            print()
-        for i in range(self.height):
-            print(' ' * self.x + '#' * self.width)
-
-    def __str__(self):
-        """returns [Rectangle] (<id>) <x>/<y> - <width>/<height>"""
-        return "[Rectangle] ({}) {}/{} - {}/{}" \
-            .format(self.id, self.x, self.y, self.width, self.height)
-
-    def update(self, *args, **kwargs):
-        """assigns an argument"""
-        if len(args) != 0:
-            try:
-                self.id = args[0]
-                self.width = args[1]
-                self.height = args[2]
-                self.x = args[3]
-                self.y = args[4]
-            except IndexError:
-                pass
-        elif len(kwargs) != 0:
-            self.id = kwargs["id"] if "id" in kwargs else self.id
-            self.width = kwargs["width"] if "width" in kwargs \
-                else self.width
-            self.height = kwargs["height"] if "height" in kwargs \
-                else self.height
-            self.x = kwargs["x"] if "x" in kwargs else self.x
-            self.y = kwargs["y"] if "y" in kwargs else self.y
-
     def to_dictionary(self):
-        """returns the dictionary representation of a Rectangle"""
+        """Returns a dictionary representation of the instance."""
         return {
-            'id': self.id,
-            'width': self.width,
-            'height': self.height,
-            'x': self.x,
-            'y': self.y
+            "id": self.id,
+            "width": self.width,
+            "height": self.height,
+            "x": self.x,
+            "y": self.y,
         }
+
+    def update(self, **kwargs):
+        """Updates the instance attributes."""
+        for key, value in kwargs.items():
+            setattr(self, key, value)
+
+    def __validate_integer(self, value, name):
+        """Validates that the input is a positive integer."""
+        if not isinstance(value, int):
+            raise TypeError(f"{name} must be an integer")
+        if value < 0 and name in ("x", "y"):
+            raise ValueError(f"{name} must be >= 0")
+        if value <= 0 and name in ("width", "height"):
+            raise ValueError(f"{name} must be > 0")
+
