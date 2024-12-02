@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Class Rectangle that inherits from Base"""
 
-from models.base import Base
+from .base import Base
 
 
 class Rectangle(Base):
@@ -65,8 +65,31 @@ class Rectangle(Base):
         self.__validate_integer(value, "y")
         self.__y = value
 
+    def area(self):
+        """Calculates the area of the rectangle."""
+        return self.width * self.height
+
+    def display(self):
+        """Prints the rectangle using the `#` character."""
+        for _ in range(self.y):
+            print("")
+        for _ in range(self.height):
+            print(" " * self.x + "#" * self.width)
+
+    def update(self, *args, **kwargs):
+        """Updates attributes."""
+        attrs = ["id", "width", "height", "x", "y"]
+        if args:
+            for i, arg in enumerate(args):
+                if i < len(attrs):
+                    setattr(self, attrs[i], arg)
+        elif kwargs:
+            for key, value in kwargs.items():
+                if key in attrs:
+                    setattr(self, key, value)
+
     def to_dictionary(self):
-        """Returns a dictionary representation of the instance."""
+        """Returns a dictionary representation of the rectangle."""
         return {
             "id": self.id,
             "width": self.width,
@@ -75,10 +98,9 @@ class Rectangle(Base):
             "y": self.y,
         }
 
-    def update(self, **kwargs):
-        """Updates the instance attributes."""
-        for key, value in kwargs.items():
-            setattr(self, key, value)
+    def __str__(self):
+        """Returns a string representation of the rectangle."""
+        return f"[Rectangle] ({self.id}) {self.x}/{self.y} - {self.width}/{self.height}"
 
     def __validate_integer(self, value, name):
         """Validates that the input is a positive integer."""
